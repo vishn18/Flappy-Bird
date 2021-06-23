@@ -4,3 +4,4 @@
 
 # Credits for Assets
 icon.png - by Freepik from Flaticon (https://www.flaticon.com)
+bird.png - by Freepik from Flaticon (https://www.flaticon.com)
