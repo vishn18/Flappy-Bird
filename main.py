@@ -1,6 +1,7 @@
 """
 A simple Python flappy bird game made using the PyGame library
 """
+import random
 import time
 import pygame
 import os
@@ -21,6 +22,7 @@ pygame.display.set_icon(ICON)
 # Game
 FPS = 60
 up = False
+score = 0
 
 # Colours
 WHITE = (255, 255, 255)
@@ -47,15 +49,44 @@ bird_cur_fall_vel = BIRD_FALL_VEL
 BIRD_CLIMB_VEL = 70
 BIRD_BOUNCE_VEL = BIRD_CLIMB_VEL - 20
 
+# Ground
+GROUND = pygame.Rect(0, 600, 600, 50)
+
 # Obstacles
-OBS_VEL = 10
+OBS = pygame.Rect(WIDTH - 50, 0, 50, HEIGHT)
+OBS_VEL = 5
 OBS_GAP = BIRD_IMG.get_height() + 100
 OBS_SPACING = 100
-
-# Ground
-GROUND = pygame.rect.Rect(
-            (0, 600, 600, 50)
+OBS_PATH = pygame.Rect(
+    OBS.x,
+    random.randint(
+        0,
+        (HEIGHT - GROUND.height - OBS_GAP)
+    ),
+    OBS.width,
+    OBS_GAP,
 )
+
+# Fonts
+MAJOR_MONO_DISPLAY = pygame.font.Font(
+    os.path.join("Assets", "MajorMonoDisplay-Regular.ttf"),
+    60
+)
+STAATLICHES = pygame.font.Font(
+    os.path.join("Assets", "Staatliches-Regular.ttf"),
+    40
+)
+
+
+def end():
+    WIN.fill(WHITE)
+    message = MAJOR_MONO_DISPLAY.render("GAME OVER", True, BROWN)
+    WIN.blit(message, (WIDTH / 2 - message.get_width() / 2, WIDTH / 2 - message.get_height()))
+    score_text = STAATLICHES.render(f"SCORE: {score}", True, BLACK)
+    WIN.blit(score_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 100))
+    pygame.display.update()
+    time.sleep(3)
+    quit()
 
 
 def fall(bird):
@@ -65,6 +96,8 @@ def fall(bird):
         jump(bird)
     elif not up:
         bird.y += bird_cur_fall_vel
+    if (bird.colliderect(OBS) and not bird.colliderect(OBS_PATH)) and (not(bird.colliderect(OBS) and bird.colliderect(OBS_PATH))):
+        end()
 
 
 def jump(bird):
@@ -76,18 +109,45 @@ def jump(bird):
     up = False
 
 
+def obs_move():
+    global score
+    if OBS.x + OBS.width < 0:
+        OBS.x = WIDTH - OBS.width
+        OBS_PATH.y = random.randint(0, (HEIGHT - GROUND.height - OBS_GAP))
+        score += 1
+    OBS.x -= OBS_VEL
+    OBS_PATH.x = OBS.x
+
+
 def draw(bird):
     """
     Handles all drawings
     :return: None
     """
+    # Background
     WIN.fill(WHITE)
 
+    # Obstacles
+    pygame.draw.rect(
+        WIN,
+        GREEN,
+        OBS
+    )
+    pygame.draw.rect(
+        WIN,
+        WHITE,
+        OBS_PATH
+    )
+    obs_move()
+
+    # Bird
     WIN.blit(
         BIRD_IMG,
         (bird.x, bird.y)
     )
     fall(bird)
+
+    # Ground
     pygame.draw.rect(
         WIN,
         BROWN,
@@ -106,6 +166,7 @@ def main():
     run = True
     clock = pygame.time.Clock()
     bird = pygame.Rect(50, 100, BIRD_IMG.get_width(), BIRD_IMG.get_height())
+    obstacles = []
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
