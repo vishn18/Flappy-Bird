@@ -5,6 +5,7 @@ import random
 import time
 import pygame
 import os
+import sys
 
 pygame.init()
 
