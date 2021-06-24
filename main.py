@@ -96,7 +96,7 @@ def fall(bird):
         jump(bird)
     elif not up:
         bird.y += bird_cur_fall_vel
-    if (bird.colliderect(OBS) and not bird.colliderect(OBS_PATH)) and (not(bird.colliderect(OBS) and bird.colliderect(OBS_PATH))):
+    if bird.colliderect(OBS) and not bird.colliderect(OBS_PATH):
         end()
 
 
