@@ -2,7 +2,6 @@
 A simple Python flappy bird game made using the PyGame library
 """
 import time
-
 import pygame
 import os
 
