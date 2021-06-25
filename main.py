@@ -1,16 +1,37 @@
 """
-A simple Python flappy bird game made using the PyGame library
+A simple Python Flappy Bird game made using the Pygame library
 """
+try:
+    from colorama import Fore
+except ModuleNotFoundError:
+    print("Couldn't import colorama!")
 try:
     import pygame
 except ModuleNotFoundError:
-    print("Couldn't import pygame: Module 'pygame' is not installed!")
-    print("Flappy Bird requires pygame to run.")
-    exit()
+    try:
+        print(f"{Fore.RED}Couldn't import pygame: Module 'pygame' is not installed!")
+        print(f"{Fore.YELLOW}Flappy Bird requires pygame to run.")
+    except NameError:
+        print("Couldn't import pygame: Module 'pygame' is not installed!")
+        print("Flappy Bird requires pygame to run.")
+    finally:
+        exit()
 import random
-import time
 from Data import data
 import os
+
+with open(os.path.join("Data", "data.csv"), "r") as file:
+    if file.read() == "":
+        try:
+            print(f"{Fore.RED}Data file is empty!")
+            print(f"{Fore.YELLOW}Resetting data...")
+            data.reset()
+            print(f"{Fore.GREEN}Done!")
+        except NameError:
+            print("Data file is empty!")
+            print("Resetting data...")
+            data.reset()
+            print("Done!")
 
 pygame.init()
 
@@ -32,6 +53,8 @@ score = 0
 # Colours
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (233, 63, 74)
+TEAL = (36, 156, 131)
 GREEN = (0, 255, 0)
 BROWN = (153, 79, 23)
 
@@ -59,12 +82,18 @@ SEAGULL_IMG = pygame.transform.rotate(
 AIRCRAFT_IMG = pygame.image.load(os.path.join("Assets", "Images", "aircraft.png"))
 COPTER_IMG_1 = pygame.image.load(os.path.join("Assets", "Images", "helicopter.png"))
 COPTER_IMG_2 = pygame.image.load(os.path.join("Assets", "Images", "helicopter2.png"))
-cur_bird_img = BIRD_IMG
+birds = {
+    1: BIRD_IMG,
+    2: SEAGULL_IMG,
+    3: AIRCRAFT_IMG,
+    4: COPTER_IMG_1,
+    5: COPTER_IMG_2,
+}
+cur_bird_img = birds[int(data.get()["bird"])]
 BIRD_FALL_VEL = 3
 BIRD_FALL_VEL_CHANGE = 0.05
 bird_cur_fall_vel = BIRD_FALL_VEL
 BIRD_CLIMB_VEL = 10
-BIRD_BOUNCE_VEL = 50
 
 # Ground
 GROUND = pygame.Rect(0, 600, 600, 50)
@@ -98,8 +127,7 @@ STAATLICHES = pygame.font.Font(
 
 
 def end():
-
-    hs = data_list[0]
+    hs = data.get()["highscore"]
     if score > int(hs):
         hs_broken = 1
     else:
@@ -108,29 +136,28 @@ def end():
     message = MAJOR_MONO_DISPLAY.render("GAME OVER", True, BROWN)
     WIN.blit(message, (WIDTH / 2 - message.get_width() / 2, WIDTH / 2 - message.get_height()))
     score_text = STAATLICHES.render(f"SCORE: {score}", True, BLACK)
-    WIN.blit(score_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 300))
+    WIN.blit(score_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 100))
     if hs_broken:
-        hs_text = STAATLICHES.render(f"NEW HIGH SCORE!\nPREVIOUS HIGH SCORE: {hs}", True, BLACK)
+        hs_text = STAATLICHES.render(f"NEW HIGH SCORE!", True, BLACK)
+        hs_prev = STAATLICHES.render(f"PREVIOUS HIGH SCORE: {hs}", True, BLACK)
+        WIN.blit(hs_prev, (WIDTH / 2 - hs_prev.get_width() / 2, WIDTH / 2 + 300))
+        data.edit(score, list(birds.keys())[list(birds.values()).index(cur_bird_img)])
     else:
         hs_text = STAATLICHES.render(f"HIGH SCORE: {hs}", True, BLACK)
-    WIN.blit(hs_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 300))
+        data.edit(hs, list(birds.keys())[list(birds.values()).index(cur_bird_img)])
+    WIN.blit(hs_text, (WIDTH / 2 - hs_text.get_width() / 2, WIDTH / 2 + 200))
     pygame.display.update()
-    time.sleep(3)
+    pygame.time.wait(3000)
     exit()
 
 
 def fall(bird):
     global up, bird_cur_fall_vel
     bird_cur_fall_vel += BIRD_FALL_VEL_CHANGE
-    if bird.colliderect(GROUND):
-        up = True
-        bird_cur_fall_vel = BIRD_FALL_VEL
-        bird.y -= BIRD_BOUNCE_VEL
-        up = False
-    elif not up:
+    if not up:
         bird.y += bird_cur_fall_vel
     if not INVINCIBLE:
-        if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM):
+        if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM) or bird.colliderect(GROUND):
             end()
 
 
@@ -167,17 +194,17 @@ def draw(bird):
     :return: None
     """
     # Background
-    WIN.fill(WHITE)
+    WIN.fill(BLACK)
 
     # Obstacles
     pygame.draw.rect(
         WIN,
-        GREEN,
+        RED,
         OBS_TOP,
     )
     pygame.draw.rect(
         WIN,
-        GREEN,
+        RED,
         OBS_BOTTOM,
     )
     obs_move()
@@ -193,7 +220,7 @@ def draw(bird):
     # Ground
     pygame.draw.rect(
         WIN,
-        BROWN,
+        TEAL,
         GROUND,
     )
 
