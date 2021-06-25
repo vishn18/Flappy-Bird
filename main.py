@@ -1,9 +1,15 @@
 """
 A simple Python flappy bird game made using the PyGame library
 """
+try:
+    import pygame
+except ModuleNotFoundError:
+    print("Couldn't import pygame: Module 'pygame' is not installed!")
+    print("Flappy Bird requires pygame to run.")
+    exit()
 import random
 import time
-import pygame
+from Data import data
 import os
 
 pygame.init()
@@ -92,14 +98,25 @@ STAATLICHES = pygame.font.Font(
 
 
 def end():
+
+    hs = data_list[0]
+    if score > int(hs):
+        hs_broken = 1
+    else:
+        hs_broken = 0
     WIN.fill(WHITE)
     message = MAJOR_MONO_DISPLAY.render("GAME OVER", True, BROWN)
     WIN.blit(message, (WIDTH / 2 - message.get_width() / 2, WIDTH / 2 - message.get_height()))
     score_text = STAATLICHES.render(f"SCORE: {score}", True, BLACK)
-    WIN.blit(score_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 100))
+    WIN.blit(score_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 300))
+    if hs_broken:
+        hs_text = STAATLICHES.render(f"NEW HIGH SCORE!\nPREVIOUS HIGH SCORE: {hs}", True, BLACK)
+    else:
+        hs_text = STAATLICHES.render(f"HIGH SCORE: {hs}", True, BLACK)
+    WIN.blit(hs_text, (WIDTH / 2 - score_text.get_width() / 2, WIDTH / 2 + 300))
     pygame.display.update()
     time.sleep(3)
-    quit()
+    exit()
 
 
 def fall(bird):
