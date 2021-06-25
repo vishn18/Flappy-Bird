@@ -3,5 +3,5 @@
 ###### A simple Python flappy bird game made using the PyGame library
 
 # Credits for Assets
-icon.png - by Freepik from Flaticon (https://www.flaticon.com)
-bird.png - by Freepik from Flaticon (https://www.flaticon.com)
+Images by <a href="https://www.flaticon.com/authors/freepik">Freepik</a> from <a href="https://flaticon.com">Flaticon<br>
+Fonts from <a href="fonts.google.com">Google Fonts</a>
