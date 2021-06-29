@@ -46,7 +46,6 @@ pygame.display.set_icon(ICON)
 
 # Game
 FPS = 60
-INVINCIBLE = 0
 up = False
 score = 0
 
@@ -127,6 +126,10 @@ STAATLICHES = pygame.font.Font(
 
 
 def end():
+    """
+    Game ending / 'outro'
+    :return: None
+    """
     hs = data.get()["highscore"]
     if score > int(hs):
         hs_broken = 1
@@ -147,21 +150,30 @@ def end():
         data.edit(hs, list(birds.keys())[list(birds.values()).index(cur_bird_img)])
     WIN.blit(hs_text, (WIDTH / 2 - hs_text.get_width() / 2, WIDTH / 2 + 200))
     pygame.display.update()
-    pygame.time.wait(3000)
+    pygame.time.wait(5000)
     exit()
 
 
 def fall(bird):
+    """
+    Handles falling and collision of the bird
+    :param Rect object 'bird'
+    :return: None
+    """
     global up, bird_cur_fall_vel
     bird_cur_fall_vel += BIRD_FALL_VEL_CHANGE
     if not up:
         bird.y += bird_cur_fall_vel
-    if not INVINCIBLE:
-        if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM) or bird.colliderect(GROUND):
-            end()
+    if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM) or bird.colliderect(GROUND):
+        end()
 
 
 def jump(bird):
+    """
+    Handles jumping of the bird
+    :param bird: Rect object 'bird'
+    :return: None
+    """
     global up, bird_cur_fall_vel
     bird_cur_fall_vel = BIRD_FALL_VEL
     up = True
@@ -170,12 +182,21 @@ def jump(bird):
 
 
 def move_bird(bird):
+    """
+    Handles movement of the bird
+    :param bird: Rect object 'bird'
+    :return: None
+    """
     keys_pressed = pygame.key.get_pressed()
     if keys_pressed[pygame.K_SPACE] and bird.y - BIRD_CLIMB_VEL > 0:
         jump(bird)
 
 
 def obs_move():
+    """
+    Handles movement of obstacles
+    :return: None
+    """
     global obs_gap, score
     obs_gap = cur_bird_img.get_height() + 150
     if OBS_TOP.x + OBS_TOP.width < 0:
