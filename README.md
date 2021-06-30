@@ -13,7 +13,7 @@ There are 5 'birds'. One can use these number keys to switch birds:<br>
 [2] Seagull<br>
 [3] Airplane<br>
 [4] Helicopter 1<br>
-[5] Helicopter 1<br>
+[5] Helicopter 2<br>
 *Note: One starts the game with the bird one used when one died in the previous run.*
 
 # Credits for Assets
