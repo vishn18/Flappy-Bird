@@ -2,36 +2,21 @@
 A simple Python Flappy Bird game made using the Pygame library
 """
 try:
-    from colorama import Fore
-except ModuleNotFoundError:
-    print("Couldn't import colorama!")
-try:
     import pygame
 except ModuleNotFoundError:
-    try:
-        print(f"{Fore.RED}Couldn't import pygame: Module 'pygame' is not installed!")
-        print(f"{Fore.YELLOW}Flappy Bird requires pygame to run.")
-    except NameError:
-        print("Couldn't import pygame: Module 'pygame' is not installed!")
-        print("Flappy Bird requires pygame to run.")
-    finally:
-        exit()
+    print("Couldn't import pygame: Module 'pygame' is not installed!")
+    print("Flappy Bird requires pygame to run.")
+    exit()
 import random
 from Data import data
 import os
 
 with open(os.path.join("Data", "data.csv"), "r") as file:
     if file.read() == "":
-        try:
-            print(f"{Fore.RED}Data file is empty!")
-            print(f"{Fore.YELLOW}Resetting data...")
-            data.reset()
-            print(f"{Fore.GREEN}Done!")
-        except NameError:
-            print("Data file is empty!")
-            print("Resetting data...")
-            data.reset()
-            print("Done!")
+        print("Data file is empty!")
+        print("Resetting data...")
+        data.reset()
+        print("Done!")
 
 pygame.init()
 
@@ -94,8 +79,8 @@ BIRD_FALL_VEL_CHANGE = 0.05
 bird_cur_fall_vel = BIRD_FALL_VEL
 BIRD_CLIMB_VEL = 10
 
-# Ground
-GROUND = pygame.Rect(0, 600, 600, 50)
+# Water
+WATER = pygame.Rect(0, 600, 600, 50)
 
 # Obstacles
 OBS_VEL = 5
@@ -105,13 +90,13 @@ OBS_TOP = pygame.Rect(
     WIDTH - 50,
     0,
     50,
-    random.randint(0, (HEIGHT - GROUND.height - obs_gap)),
+    random.randint(0, (HEIGHT - WATER.height - obs_gap)),
 )
 OBS_BOTTOM = pygame.Rect(
     OBS_TOP.x,
     OBS_TOP.height + obs_gap,
     OBS_TOP.width,
-    (HEIGHT - GROUND.height) - OBS_TOP.height,
+    (HEIGHT - WATER.height) - OBS_TOP.height,
 )
 
 # Fonts
@@ -164,7 +149,7 @@ def fall(bird):
     bird_cur_fall_vel += BIRD_FALL_VEL_CHANGE
     if not up:
         bird.y += bird_cur_fall_vel
-    if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM) or bird.colliderect(GROUND):
+    if bird.colliderect(OBS_TOP) or bird.colliderect(OBS_BOTTOM) or bird.colliderect(WATER):
         end()
 
 
@@ -201,12 +186,12 @@ def obs_move():
     obs_gap = cur_bird_img.get_height() + 150
     if OBS_TOP.x + OBS_TOP.width < 0:
         OBS_TOP.x = WIDTH - OBS_TOP.width
-        OBS_TOP.height = random.randint(0, (HEIGHT - GROUND.height - obs_gap))
+        OBS_TOP.height = random.randint(0, (HEIGHT - WATER.height - obs_gap))
         score += 1
     OBS_TOP.x -= OBS_VEL
     OBS_BOTTOM.x = OBS_TOP.x
     OBS_BOTTOM.y = OBS_TOP.height + obs_gap
-    OBS_BOTTOM.height = (HEIGHT - GROUND.height) - OBS_TOP.height
+    OBS_BOTTOM.height = (HEIGHT - WATER.height) - OBS_TOP.height
 
 
 def draw(bird):
@@ -238,11 +223,11 @@ def draw(bird):
     )
     fall(bird)
 
-    # Ground
+    # Water
     pygame.draw.rect(
         WIN,
         TEAL,
-        GROUND,
+        WATER,
     )
 
     pygame.display.update()
