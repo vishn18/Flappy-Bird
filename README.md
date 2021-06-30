@@ -18,4 +18,4 @@ There are 5 'birds'. One can use these number keys to switch birds:<br>
 
 # Credits for Assets
 Images by <a href="https://www.flaticon.com/authors/freepik">Freepik</a> from <a href="https://flaticon.com">Flaticon</a><br>
-Fonts from <a href="fonts.google.com">Google Fonts</a>
+Fonts from <a href="https://fonts.google.com">Google Fonts</a>
