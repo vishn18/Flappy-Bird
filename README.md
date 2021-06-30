@@ -2,6 +2,7 @@
 ###### A simple Python flappy bird game made using the PyGame library
 
 ## How to Play
+###### Just run *main.py*. Make sure you have Python and Pygame installed.
 ### Aim
 1. Increase one's highscore by surviving for as long as possible
 2. One dies when one (1)Collides with the red 'obstacles' or (2)Collides with the blue 'water'.
